@@ -1,98 +1,136 @@
-# ID-GENERATOR
 
-Descrição em construcão...
+# 🚀 ID Generator
 
----
+Sistema fullstack para geração, validação e gerenciamento de crachás, com autenticação segura e persistência em banco de dados.
 
-## Tecnologias Utilizadas
-
-- Next.js 16 (Fullstack)
-- PNPM
-- PostgreSQL
-- Docker
-- Docker Compose
+> Projeto em evolução contínua — focado em performance, segurança e escalabilidade.
 
 ---
 
-## Pré-requisitos
+## 🧠 Visão Geral
 
-Antes de iniciar o projeto, instale:
+O **ID Generator** é uma aplicação construída com arquitetura moderna, utilizando tecnologias de ponta no ecossistema JavaScript. Ele permite a geração de IDs únicos, gerenciamento via API e autenticação com JWT, tudo integrado a um banco PostgreSQL.
 
-- Node.js (25 ou superior)
-- PNPM
-- Docker
-- Docker Compose
-
-Para verificar:
-
-node -v  
-pnpm -v  
-docker -v  
-docker compose version  
+Ideal para estudos avançados, MVPs ou base para produtos reais.
 
 ---
 
-## Clonando o Projeto
+## 🛠️ Tecnologias Utilizadas
 
+- **Next.js 16** (Fullstack)
+- **PNPM**
+- **PostgreSQL**
+- **Docker**
+- **Docker Compose**
+- **Prisma ORM**
+- **JWT (JSON Web Token)**
+
+---
+
+## ✅ Pré-requisitos
+
+Antes de iniciar, certifique-se de ter instalado:
+
+- **Node.js** `v25+`
+- **PNPM**
+- **Docker**
+- **Docker Compose**
+
+Verifique com:
+
+```bash
+node -v
+pnpm -v
+docker -v
+docker compose version
+````
+
+---
+
+## 📦 Clonando o Projeto
+
+```bash
 git clone git@github.com:samueldmonteiro/id-generator.git
 cd id-generator
+```
 
 ---
 
-## Configuração do .env
+## 🔐 Configuração do Ambiente
 
-Copie o arquivo `.env.example` para  `.env` na raiz do projeto:
+Crie um arquivo `.env` na raiz do projeto com base no `.env.example`:
 
+```env
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
-DB_DATABASE="seu_banco"
+DB_DATABASE=seu_banco
 
 DATABASE_URL="postgresql://seu_usuario:sua_senha@localhost:5432/seu_banco"
-JWT_SECRET=sua_chave
+JWT_SECRET=sua_chave_secreta
+```
+
+> ⚠️ **Nunca versionar o arquivo `.env`**
 
 ---
 
-## Subindo o Banco de Dados com Docker
+## 🐳 Subindo o Banco de Dados com Docker
 
-docker compose up -d  
-
----
-
-## Instalando as Dependências
-
-pnpm install  
+```bash
+docker compose up -d
+```
 
 ---
 
-## Executando Migrações (se usar Prisma)
+## 📥 Instalando as Dependências
 
-pnpm prisma migrate dev  
-
----
-
-## Rodando o Projeto em Desenvolvimento
-
-pnpm dev  
-
-O projeto ficará disponível em:
-
-http://localhost:3000  
+```bash
+pnpm install
+```
 
 ---
 
-## Parar os Containers
+## 🧬 Executando as Migrações (Prisma)
 
-docker compose down  
-
----
-
-## Observações
-
-- Nunca versionar o arquivo `.env`
-- Sempre subir o banco antes de rodar o projeto
-- Verifique se a porta 5432 não está sendo usada por outro Postgres local
+```bash
+pnpm prisma migrate dev
+```
 
 ---
 
-## Autores
-Samuel Davi & Thomaz
+## ▶️ Rodando o Projeto em Desenvolvimento
+
+```bash
+pnpm dev
+```
+
+A aplicação ficará disponível em:
+
+```
+http://localhost:3000
+```
+
+---
+
+## ⛔ Parando os Containers
+
+```bash
+docker compose down
+```
+
+---
+
+## ⚠️ Observações Importantes
+
+* ✅ Sempre suba o banco antes de rodar o projeto
+* ✅ Nunca versione o `.env`
+* ✅ Verifique se a porta **5432** não está ocupada por outro PostgreSQL
+* ✅ Use `pnpm`, não `npm` nem `yarn`
+
+---
+
+## 🧑‍💻 Autores
+
+* **Samuel Davi**
+* **Thomaz**
+
+---
