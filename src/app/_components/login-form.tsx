@@ -50,7 +50,6 @@ export const LoginForm = () => {
             <h1 className="text-2xl font-bold text-gray-800">
               Gerencimento de Crachás
             </h1>
-
           </div>
 
           {/* Alertas de Acesso */}
@@ -63,7 +62,7 @@ export const LoginForm = () => {
             </div>
 
           </div>
-
+ 
           {/* Formulário */}
           <form action={action} className="space-y-6">
             {state?.formError && (
