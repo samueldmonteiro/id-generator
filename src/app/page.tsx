@@ -1,4 +1,4 @@
-import { getUsers } from "../actions/user-actions";
+import { getUsers } from "../actions/user-action";
 
 export default async function Home() {
 
