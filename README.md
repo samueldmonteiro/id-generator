@@ -92,6 +92,7 @@ pnpm install
 ## 🧬 Executando as Migrações (Prisma)
 
 ```bash
+pnpm prisma generate
 pnpm prisma migrate dev
 ```
 
