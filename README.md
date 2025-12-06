@@ -18,7 +18,7 @@ Descrição em construcão...
 
 Antes de iniciar o projeto, instale:
 
-- Node.js (18 ou superior)
+- Node.js (25 ou superior)
 - PNPM
 - Docker
 - Docker Compose
