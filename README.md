@@ -97,6 +97,14 @@ pnpm prisma migrate dev
 
 ---
 
+## 🧬 Rodr Seeders (Prisma)
+
+```bash
+pnpm seed
+```
+
+---
+
 ## ▶️ Rodando o Projeto em Desenvolvimento
 
 ```bash
