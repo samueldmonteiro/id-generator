@@ -9,9 +9,7 @@ Sistema fullstack para geração, validação e gerenciamento de crachás, com a
 
 ## 🧠 Visão Geral
 
-O **ID Generator** é uma aplicação construída com arquitetura moderna, utilizando tecnologias de ponta no ecossistema JavaScript. Ele permite a geração de IDs únicos, gerenciamento via API e autenticação com JWT, tudo integrado a um banco PostgreSQL.
-
-Ideal para estudos avançados, MVPs ou base para produtos reais.
+Software de geração automatizada de crachás, e gerenciamento completo através de painel administrativo.
 
 ---
 
