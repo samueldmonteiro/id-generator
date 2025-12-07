@@ -32,10 +32,9 @@ function SubmitButton() {
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
 
-  const [state, action, pending] = useActionState(login, undefined)
+  const [state, action, pending] = useActionState(login, undefined);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 flex items-center justify-center p-4">
@@ -172,57 +171,15 @@ export const LoginForm = () => {
               </div>
             </div>
 
-            {/* Opções Adicionais */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember"
-                  name="remember"
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label
-                  htmlFor="remember"
-                  className="ml-2 text-sm text-gray-600"
-                >
-                  Manter conectado
-                </label>
-              </div>
-
-            </div>
-
             {/* Botão de Submit */}
             <SubmitButton />
-
-            {/* Divisor */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-
-            </div>
           </form>
-
-          {/* Informações de Suporte */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <div className="text-center">
-              <p className="text-sm text-gray-600">
-                <strong>Suporte:</strong> suporte@universidade.edu.br
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Horário de atendimento: Segunda a Sexta, 8h às 18h
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Informações do Sistema */}
         <div className="mt-6 text-center space-y-2">
           <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
-            <span>v3.2.1</span>
-            <span>•</span>
+            <span>v1.0</span>
           </div>
           <p className="text-xs text-gray-400">
             © {new Date().getFullYear()} X - Todos os direitos reservados

@@ -3,13 +3,9 @@
 import { loginSchema } from "../schemas/login-schema";
 import { authService } from "../services/auth-service";
 
-export async function login(
- _prevState: any,          
+export async function login(_prevState: any, formData: FormData) {
 
-  formData: FormData 
-){
   const raw = Object.fromEntries(formData);
-
   const parsed = loginSchema.safeParse(raw);
 
   if (!parsed.success) {
