@@ -15,4 +15,4 @@ const LoginPage = async () => {
   )
 }
 
-export default LoginPage
+export default LoginPage;
