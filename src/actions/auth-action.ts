@@ -3,7 +3,7 @@
 import { loginSchema } from "../schemas/login-schema";
 import { authServiceFactory } from "../factories/service-factory";
 import { UserSafe } from "../types/user-type";
-import { createSession } from "../lib/session";
+import { createSession, deleteSession } from "../lib/session";
 import { redirect } from "next/navigation";
 
 const authService = authServiceFactory();
@@ -41,4 +41,9 @@ export async function login(_prevState: any, formData: FormData): Promise<LoginA
       formError: err.message,
     };
   }
+}
+
+export const logout = async (): Promise<void> => {
+  await deleteSession();
+  redirect('/login');
 }
