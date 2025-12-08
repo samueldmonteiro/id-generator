@@ -59,7 +59,12 @@ export const LoginForm = () => {
       <div className="w-full max-w-md space-y-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="p-4 bg-primary/10 rounded-full ring-8 ring-primary/5">
-            <Image src={logo} alt="Logo" width={80} height={80} />
+            <Image
+              src={logo}
+              alt="Logo da instituição"
+              width={80}
+              height={80}
+            />
           </div>
           <div className="space-y-1">
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
@@ -73,7 +78,7 @@ export const LoginForm = () => {
 
         <Card className="border-border/50 shadow-xl shadow-primary/5">
           <CardContent className="space-y-3 pt-1">
-            <div className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 border border-blue-500/20 rounded-md text-blue-600 dark:text-blue-400">
+            <div className="flex items-center gap-2 px-3 py-2 bg-orange-600/10 border border-orange-500/20 rounded-md text-orange-600 dark:text-orange-400">
               <ShieldCheck className="w-4 h-4 shrink-0" />
               <p className="text-xs font-medium">
                 Área restrita para administradores
@@ -164,9 +169,34 @@ export const LoginForm = () => {
               </div>
             </form>
           </CardContent>
+
           <CardFooter className="flex flex-col space-y-2 text-center text-xs text-muted-foreground border-t bg-muted/20 pt-4 pb-6 rounded-b-xl">
-            <p>Acesso monitorado por IP</p>
-            <p>© {new Date().getFullYear()} Universidade X - v1.0</p>
+            <p className="mb-1">
+              © {new Date().getFullYear()} | Todos os direitos reservados - v1.0
+            </p>
+
+            <div className="flex items-center justify-center text-xs">
+              <GraduationCap className="w-3.5 h-3.5 mr-1 text-muted-foreground/80" />
+              <span className="text-muted-foreground/80">
+                Desenvolvido por:
+              </span>
+
+              <Link
+                href="https://www.linkedin.com/in/thomaz-athaide-5546aa293/"
+                target="_blank"
+                className="ml-1 font-semibold text-foreground/90 hover:text-primary transition-colors flex items-center"
+              >
+                Thomaz
+              </Link>
+              <span className="text-muted-foreground/80 mx-1">&</span>
+              <Link
+                href="https://www.linkedin.com/in/samuel-m-4a4432250/"
+                target="_blank"
+                className="font-semibold text-foreground/90 hover:text-primary transition-colors flex items-center"
+              >
+                Samuel
+              </Link>
+            </div>
           </CardFooter>
         </Card>
       </div>
