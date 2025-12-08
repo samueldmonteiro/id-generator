@@ -1,4 +1,4 @@
-import { LoginForm } from "../../components/login-form"
+import { LoginForm } from "../../components/login-form";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,12 +7,11 @@ export const metadata: Metadata = {
 };
 
 const LoginPage = async () => {
-
   return (
     <>
       <LoginForm />
     </>
-  )
-}
+  );
+};
 
 export default LoginPage;

@@ -1,8 +1,10 @@
 'use server'
 
-import { User } from "../generated/prisma/client";
-import prisma from "../lib/prisma"
+import { UserRepository } from "../repositories/user-repository";
+import { AuthService } from "../services/auth-service";
 
-export const getUsers = async (): Promise<User[]> => {
-  return prisma.user.findMany();
+const userService = new AuthService(new UserRepository())
+
+export const getUsers = async () => {
+  return userService.getUsers();
 }

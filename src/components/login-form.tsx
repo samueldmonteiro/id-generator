@@ -1,190 +1,178 @@
-'use client'
+"use client";
 
 import { login } from "@/src/actions/auth-action";
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Eye, EyeOff, Loader2, GraduationCap, Key, Mail, Shield } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  GraduationCap,
+  Key,
+  Mail,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
+
+import { ModeToggle } from "@/src/components/toggle-theme";
+import { redirect } from "next/navigation";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-    >
+    <Button type="submit" disabled={pending} className="w-full" size="lg">
       {pending ? (
         <>
-          <Loader2 className="w-5 h-5 animate-spin" />
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
           Autenticando...
         </>
       ) : (
         <>
-          <Key className="w-5 h-5" />
+          <Key className="w-4 h-4 mr-2" />
           Acessar Sistema
         </>
       )}
-    </button>
+    </Button>
   );
 }
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [state, action] = useActionState(login, undefined);
 
-  const [state, action, pending] = useActionState(login, undefined);
+  if (state?.success) {
+    redirect('/');
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Card Principal */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-          {/* Cabeçalho */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full mb-4 shadow-md">
-              <GraduationCap className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Gerencimento de Crachás
-            </h1>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-muted/40 transition-colors relative">
+      <div className="absolute top-4 right-4">
+        <ModeToggle />
+      </div>
+      <div className="w-full max-w-md space-y-6">
+        {/* Header Logo Area */}
+        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+          <div className="p-4 bg-primary/10 rounded-full ring-8 ring-primary/5">
+            <GraduationCap className="w-10 h-10 text-primary" />
           </div>
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Gerenciamento de Crachás
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Sistema administrativo institucional
+            </p>
+          </div>
+        </div>
 
-          {/* Alertas de Acesso */}
-          <div className="mb-6 space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-blue-800">
-                <strong>Acesso Restrito:</strong> Esta área é exclusiva para a administração da instituição.
+        <Card className="border-border/50 shadow-xl shadow-primary/5">
+          <CardHeader className="space-y-1 pb-0">
+            <div className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 border border-blue-500/20 rounded-md text-blue-600 dark:text-blue-400">
+              <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+              <p className="text-xs font-medium">
+                Área restrita para administradores
               </p>
             </div>
-
-          </div>
- 
-          {/* Formulário */}
-          <form action={action} className="space-y-6">
-            {state?.formError && (
-                  <div
-                    id="email-error"
-                    className="text-red-500 text-sm mt-1 flex items-center gap-1"
-                  >
-                    {state?.formError}
-                  </div>
-                )}
-            {/* Campo Email */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Email Institucional
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <form action={action} className="space-y-2">
+              {state?.formError && (
+                <div className="p-3 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin hidden" />{" "}
+                  {/* Espaço do erro */}
+                  <span>{state?.formError}</span>
                 </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="username"
-                  placeholder="seu.email@universidade.edu.br"
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ${state?.errors?.email
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-gray-400"
-                    }`}
-                  aria-invalid={!!state?.errors?.email}
-                  aria-describedby={
-                    state?.errors?.email ? "email-error" : undefined
-                  }
-                  required
-                />
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Institucional</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="seu.email@universidade.edu.br"
+                    className={`pl-10 ${state?.errors?.email
+                        ? "border-destructive focus-visible:ring-destructive"
+                        : ""
+                      }`}
+                    required
+                    autoComplete="username"
+                  />
+                </div>
                 {state?.errors?.email && (
-                  <div
-                    id="email-error"
-                    className="text-red-500 text-sm mt-1 flex items-center gap-1"
-                  >
-                    {state?.errors?.email}
-                  </div>
+                  <p className="text-sm text-destructive mt-1">
+                    {state.errors.email}
+                  </p>
                 )}
               </div>
 
-            </div>
-
-            {/* Campo Senha */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Senha
-                </label>
-                <Link
-                  href="/recuperar-senha"
-                  className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-                >
-                  Esqueceu a senha?
-                </Link>
-              </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Key className="h-5 w-5 text-gray-400" />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Senha</Label>
+                  <Link
+                    href="/recuperar-senha"
+                    className="text-xs font-medium text-primary hover:underline underline-offset-4"
+                  >
+                    Esqueceu a senha?
+                  </Link>
                 </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  placeholder="Digite sua senha"
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ${state?.errors?.password
-                      ? "border-red-300 bg-red-50"
-                      : "border-gray-300 hover:border-gray-400"
-                    }`}
-                  aria-invalid={!!state?.errors?.password}
-                  aria-describedby={
-                    state?.errors?.password ? "password-error" : undefined
-                  }
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700 focus:outline-none rounded hover:bg-gray-100"
-                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-                {state?.errors?.password && (
-                  <div
-                    id="password-error"
-                    className="text-red-500 text-sm mt-1 flex items-center gap-1"
+                <div className="relative">
+                  <Key className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    className={`pl-10 pr-10 ${state?.errors?.password
+                        ? "border-destructive focus-visible:ring-destructive"
+                        : ""
+                      }`}
+                    required
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground focus:outline-none"
                   >
-                    {state?.errors?.password}
-                  </div>
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+                {state?.errors?.password && (
+                  <p className="text-sm text-destructive mt-1">
+                    {state.errors.password}
+                  </p>
                 )}
               </div>
-            </div>
 
-            {/* Botão de Submit */}
-            <SubmitButton />
-          </form>
-        </div>
-
-        {/* Informações do Sistema */}
-        <div className="mt-6 text-center space-y-2">
-          <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
-            <span>v1.0</span>
-          </div>
-          <p className="text-xs text-gray-400">
-            © {new Date().getFullYear()} X - Todos os direitos reservados
-          </p>
-        </div>
+              <div className="pt-2">
+                <SubmitButton />
+              </div>
+            </form>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-2 text-center text-xs text-muted-foreground border-t bg-muted/20 pt-4 pb-6 rounded-b-xl">
+            <p>Acesso monitorado por IP</p>
+            <p>© {new Date().getFullYear()} Universidade X - v1.0</p>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );
