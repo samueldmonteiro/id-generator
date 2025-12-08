@@ -1,5 +1,4 @@
 import { AppSidebar } from '@/src/components/app-sidebar'
-import { ChartAreaInteractive } from '@/src/components/chart-area-interactive'
 import { DataTable } from '@/src/components/data-table'
 import { SectionCards } from '@/src/components/section-cards'
 import { SiteHeader } from '@/src/components/site-header'
@@ -10,6 +9,7 @@ import {
 
 import data from "./data.json"
 import { getUser } from '@/src/lib/dal'
+import { ModeToggle } from '@/src/components/toggle-theme'
 
 export default async function DashboardPage() {
 
@@ -26,6 +26,7 @@ export default async function DashboardPage() {
     >
       <AppSidebar variant="inset" user={user}/>
       <SidebarInset>
+
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">

@@ -33,6 +33,9 @@ import {
   SidebarMenuItem,
 } from "@/src/components/ui/sidebar"
 import { User } from "../generated/prisma/client"
+import Image from "next/image"
+import logo from "@/src/assets/logo.png";
+import { ModeToggle } from "./toggle-theme"
 
 const data = {
   user: {
@@ -159,6 +162,7 @@ export function AppSidebar({ ...props }: SidebarProps) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
+
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -166,10 +170,11 @@ export function AppSidebar({ ...props }: SidebarProps) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="/dashboard">
-                <IconInnerShadowTop className="!size-5" />
+                <Image alt="logo" src={logo} width={35} height={35}/>
                 <span className="text-base font-semibold">Crachá Pro</span>
               </a>
             </SidebarMenuButton>
+
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
