@@ -9,8 +9,12 @@ import {
 } from '@/src/components/ui/sidebar'
 
 import data from "./data.json"
+import { getUser } from '@/src/lib/dal'
 
-export default function Page() {
+export default async function DashboardPage() {
+
+  const user = await getUser();
+
   return (
     <SidebarProvider
       style={
@@ -20,7 +24,7 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" user={user}/>
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
