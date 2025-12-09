@@ -1,14 +1,11 @@
 import { DataTable } from '@/src/components/data-table'
 import { SectionCards } from '@/src/components/section-cards'
-import data from "./data.json"
 
-export default async function DashboardPage() {
+export default async function DashboardLinkPage() {
 
   return (
     <>
-      <SectionCards />
-
-      <DataTable data={data} />
+      <h1>Links</h1>
     </>
   )
 }

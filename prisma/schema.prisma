@@ -8,15 +8,34 @@ datasource db {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  name       String     @db.VarChar(100)
-  email      String     @unique @db.VarChar(100)
-  password   String     @db.VarChar(200)
-  role       UserRole   @default(USER)
+  id       Int      @id @default(autoincrement())
+  name     String   @db.VarChar(100)
+  email    String   @unique @db.VarChar(100)
+  password String   @db.VarChar(200)
+  role     UserRole @default(USER)
   @@map("users")
 }
 
 enum UserRole {
   USER
   ADMIN
+}
+
+model BadgeSubscription {
+  id         Int                       @id @default(autoincrement())
+  name       String                    @db.VarChar(100)
+  courseName String                    @db.VarChar(100)
+  position   BadgeSubscriptionPosition @default(ESTAGIARIO)
+  image String @db.VarChar(200)
+  badgeFile String @db.VarChar(200)
+  @@map("badge_subscriptions")
+}
+
+enum BadgeSubscriptionPosition {
+  ESTAGIARIO
+  ADMINISTRATIVO
+  PRECEPTOR
+  TUTOR
+  PROFESSOR
+  PROFESSORA
 }

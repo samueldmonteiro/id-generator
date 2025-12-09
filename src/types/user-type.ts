@@ -14,7 +14,6 @@ export type UserWithRelations = User & {
   // outras relações que você usa frequentemente
 };
 
-
 // 5. Tipo seguro para respostas públicas
 export type UserSafe = Omit<UserBase, 'password' | 'resetToken' | 'otherSensitiveData'>;
 

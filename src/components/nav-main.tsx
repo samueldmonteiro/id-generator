@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/src/components/ui/sidebar"
+import Link from "next/link"
 
 export function NavMain({
   items,
@@ -24,6 +25,7 @@ export function NavMain({
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
+          <Link href={'/dashboard'}>
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               tooltip="Quick Create"
@@ -34,15 +36,18 @@ export function NavMain({
             </SidebarMenuButton>
            
           </SidebarMenuItem>
+          </Link>
         </SidebarMenu>
         <SidebarMenu>
           {items.map((item) => (
+            <Link href={item.url}>
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton tooltip={item.title}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            </Link>
           ))}
         </SidebarMenu>
       </SidebarGroupContent>

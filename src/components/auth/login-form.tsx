@@ -22,6 +22,8 @@ import { ModeToggle } from "@/src/components/toggle-theme";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import logo from "@/src/assets/logo.png";
+import { Alert } from "../custom/alert";
+import Footer from "../footer";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -78,7 +80,7 @@ export const LoginForm = () => {
 
         <Card className="border-border/50 shadow-xl shadow-primary/5">
           <CardContent className="space-y-3 pt-1">
-            <div className="flex items-center gap-2 px-3 py-2 bg-orange-600/10 border border-orange-500/20 rounded-md text-orange-600 dark:text-orange-400">
+            <div className="justify-center flex items-center gap-2 px-3 py-2 bg-orange-600/10 border border-orange-500/20 rounded-md text-orange-600 dark:text-orange-400">
               <ShieldCheck className="w-4 h-4 shrink-0" />
               <p className="text-xs font-medium">
                 Área restrita para administradores
@@ -87,9 +89,7 @@ export const LoginForm = () => {
 
             <form action={action} className="space-y-5">
               {state?.formError && (
-                <div className="p-3 text-sm mb-5 font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-md flex items-center gap-2">
-                  <span>{state?.formError}</span>
-                </div>
+                <Alert title={state.formError} variant="error" className="my-5"/>
               )}
 
               <div className="space-y-2">
@@ -170,34 +170,7 @@ export const LoginForm = () => {
             </form>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-2 text-center text-xs text-muted-foreground border-t bg-muted/20 pt-4 pb-6 rounded-b-xl">
-            <p className="mb-1">
-              © {new Date().getFullYear()} | Todos os direitos reservados - v1.0
-            </p>
-
-            <div className="flex items-center justify-center text-xs">
-              <GraduationCap className="w-3.5 h-3.5 mr-1 text-muted-foreground/80" />
-              <span className="text-muted-foreground/80">
-                Desenvolvido por:
-              </span>
-
-              <Link
-                href="https://www.linkedin.com/in/thomaz-athaide-5546aa293/"
-                target="_blank"
-                className="ml-1 font-semibold text-foreground/90 hover:text-primary transition-colors flex items-center"
-              >
-                Thomaz
-              </Link>
-              <span className="text-muted-foreground/80 mx-1">&</span>
-              <Link
-                href="https://www.linkedin.com/in/samuel-m-4a4432250/"
-                target="_blank"
-                className="font-semibold text-foreground/90 hover:text-primary transition-colors flex items-center"
-              >
-                Samuel
-              </Link>
-            </div>
-          </CardFooter>
+          <Footer/>
         </Card>
       </div>
     </div>

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Crachá - Anhanguera",
-  description: "Gerador de Crachás Anhanguera",
+  title: "Crachá Pro",
+  description: "Gerador de Crachás"
 };
 
 export default function RootLayout({
