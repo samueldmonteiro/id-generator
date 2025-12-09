@@ -1,129 +1,121 @@
-import nodeUtil from "util";
-
-// Configuração global completa
-if (typeof global.TextEncoder === 'undefined') {
-  global.TextEncoder = nodeUtil.TextEncoder as any;
-  global.TextDecoder = nodeUtil.TextDecoder as any;
-}
-
-if (typeof global.window === 'undefined') {
-  global.window = {} as any;
-}
-
-// --------
 import sharp from "sharp";
-import * as faceapi from "@vladmandic/face-api";
-import { Canvas, Image, ImageData } from "canvas";
-import path from "path";
-
-// @ts-ignore
-faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
-
-
-// Carregamento único dos modelos
-let modelsLoaded = false;
-
-async function loadModels() {
-  if (modelsLoaded) return;
-
-  const modelPath = path.join(process.cwd(), "public/models");
-
-  await faceapi.nets.tinyFaceDetector.loadFromDisk(modelPath);
-  await faceapi.nets.faceLandmark68Net.loadFromDisk(modelPath);
-
-  modelsLoaded = true;
-}
+import { BadgeSubscriptionRepository } from "../repositories/badge-subscription-repository";
+import { TraineeSubscriptionDTO } from "../schemas/badge-subscriptions/trainee-subscription-schema";
 
 export class BadgeSubscriptionService {
-  /**
-   * Valida a imagem e retorna o buffer processado pronto para upload.
-   */
-  async validateImage(fileBuffer: Buffer) {
-    await loadModels();
+  constructor(private badgeSubscriptionRepo: BadgeSubscriptionRepository) { }
 
-    // Padroniza formato, remove EXIF, gira se necessário
-    const processedBuffer = await sharp(fileBuffer)
-      .rotate()
-      .jpeg({ quality: 90 })
-      .toBuffer();
+  async traineeSubscription(dto: TraineeSubscriptionDTO) {
+    const { name, course, image } = dto;
 
-    const img = await loadCanvasImage(processedBuffer);
-
-    // Detecta rosto
-    const detections = await faceapi
-      .detectAllFaces(
-        img as any,
-        new faceapi.TinyFaceDetectorOptions({
-          inputSize: 416,
-          scoreThreshold: 0.5,
-        })
-      )
-      .withFaceLandmarks();
-
-    // --- REGRAS DE VALIDAÇÃO ---
-    if (detections.length === 0) {
-      throw new Error("Nenhum rosto foi detectado na imagem.");
+    // 1. Garantir que é um File
+    if (!(image instanceof File)) {
+      throw new Error("A imagem enviada é inválida.");
     }
 
-    if (detections.length > 1) {
-      throw new Error("Há mais de um rosto na imagem. Use uma foto individual.");
+    // 2. Tamanho máximo de arquivo (ex: 3MB)
+    const maxSize = 3 * 1024 * 1024;
+    if (image.size > maxSize) {
+      throw new Error("A imagem é muito grande. Máximo permitido: 3MB.");
     }
 
-    const { box } = detections[0].detection;
-
-    const width = img.width;
-    const height = img.height;
-
-    // Tamanho mínimo para qualidade decente
-    if (width < 400 || height < 500) {
-      throw new Error("A imagem está muito pequena. Use uma foto maior ou mais nítida.");
+    // 3. Validar MIME type
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowed.includes(image.type)) {
+      throw new Error("Formato inválido. Use JPG, PNG ou WEBP.");
     }
 
-    // Centralização do rosto com 20% de tolerância
-    const faceCenterX = box.x + box.width / 2;
-    const faceCenterY = box.y + box.height / 2;
+    // 4. Converter para Buffer
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    const imgCenterX = width / 2;
-    const imgCenterY = height / 2;
+    // 5. Ler metadados
+    const metadata = await sharp(buffer).metadata();
+    const { width, height } = metadata;
 
-    const toleranceX = width * 0.2;
-    const toleranceY = height * 0.2;
-
-    if (Math.abs(faceCenterX - imgCenterX) > toleranceX) {
-      throw new Error("O rosto não está centralizado horizontalmente.");
+    if (!width || !height) {
+      throw new Error("Não foi possível ler a imagem.");
     }
 
-    if (Math.abs(faceCenterY - imgCenterY) > toleranceY) {
-      throw new Error("O rosto não está centralizado verticalmente.");
+    // 6. Dimensões mínimas
+    if (width < 300 || height < 400) {
+      throw new Error("A imagem é muito pequena. Min: 300x400 pixels.");
     }
 
-    // Face mínima para evitar foto de corpo inteiro
-    const faceArea = box.width * box.height;
-    const imgArea = width * height;
-
-    if (faceArea < imgArea * 0.05) {
-      throw new Error("O rosto está muito pequeno na imagem.");
+    // 7. Garantir que é vertical (retratos)
+    const aspect = height / width;
+    if (aspect < 1.2) {
+      throw new Error("Use uma foto em orientação retrato (vertical).");
     }
 
-    // Foto válida
+    // 8. Medir nitidez (forma simples)
+    const laplace = await this.getSharpnessScore(buffer);
+    if (laplace < 5) {
+      throw new Error("A imagem está desfocada demais.");
+    }
+
+    // 9. Conferir contraste no centro (garantir rosto visível)
+    const isValidContrast = await this.checkCenterContrast(buffer);
+    if (!isValidContrast) {
+      throw new Error("A foto está muito escura ou clara no centro.");
+    }
+
+    // --- Se passar aqui, a imagem é decente para o crachá ---
+
     return {
-      ok: true,
-      buffer: processedBuffer,
-      info: {
-        width,
-        height,
-        faceBox: box,
-      },
-    };
+      ok: true
+    }
   }
-}
 
-// Carrega a imagem no canvas
-function loadCanvasImage(buffer: Buffer) {
-  return new Promise<Image>((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = (err) => reject(err);
-    img.src = buffer;
-  });
+  async getSharpnessScore(buffer: Buffer): Promise<number> {
+    const gray = await sharp(buffer)
+      .grayscale()
+      .raw()
+      .normalise()
+      .toBuffer({ resolveWithObject: true });
+
+    const pixels = gray.data;
+    let sumSqDiff = 0;
+
+    for (let i = 1; i < pixels.length; i++) {
+      const diff = pixels[i] - pixels[i - 1];
+      sumSqDiff += diff * diff;
+    }
+
+    return sumSqDiff / pixels.length; // quanto menor, mais borrada
+  }
+
+  async checkCenterContrast(buffer: Buffer): Promise<boolean> {
+    const { data, info } = await sharp(buffer)
+      .resize(200, 200)
+      .grayscale()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    const { width, height } = info;
+
+    const startX = Math.floor(width * 0.3);
+    const endX = Math.floor(width * 0.7);
+    const startY = Math.floor(height * 0.3);
+    const endY = Math.floor(height * 0.7);
+
+    let pixels: number[] = [];
+
+    for (let y = startY; y < endY; y++) {
+      for (let x = startX; x < endX; x++) {
+        pixels.push(data[y * width + x]);
+      }
+    }
+
+    const mean =
+      pixels.reduce((a, b) => a + b, 0) / pixels.length;
+
+    const variance =
+      pixels.reduce((a, b) => a + (b - mean) ** 2, 0) /
+      pixels.length;
+
+    return variance > 500; // threshold simples & funcional
+  }
+
+
 }
