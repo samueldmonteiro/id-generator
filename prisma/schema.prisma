@@ -13,6 +13,7 @@ model User {
   email    String   @unique @db.VarChar(100)
   password String   @db.VarChar(200)
   role     UserRole @default(USER)
+
   @@map("users")
 }
 
@@ -26,8 +27,9 @@ model BadgeSubscription {
   name       String                    @db.VarChar(100)
   courseName String                    @db.VarChar(100)
   position   BadgeSubscriptionPosition @default(ESTAGIARIO)
-  image String @db.VarChar(200)
-  badgeFile String @db.VarChar(200)
+  image      String                    @db.VarChar(200)
+  badgeFile  String                    @db.VarChar(200)
+
   @@map("badge_subscriptions")
 }
 
@@ -38,4 +40,22 @@ enum BadgeSubscriptionPosition {
   TUTOR
   PROFESSOR
   PROFESSORA
+}
+
+enum LinkType {
+  ESTAGIARIO
+  INSTITUCIONAL
+}
+
+model SubscriptionLink {
+  id        Int                       @id @default(autoincrement())
+  code      String                    @unique
+  type      BadgeSubscriptionPosition
+  limit     Int?
+  usedCount Int                       @default(0)
+  expiresAt DateTime?
+  active    Boolean                   @default(true)
+  createdAt DateTime                  @default(now())
+
+  @@map("subscription_links")
 }
