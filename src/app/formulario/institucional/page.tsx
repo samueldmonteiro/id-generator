@@ -36,9 +36,20 @@ import {
 
 const cargos = ["Preceptor", "Professor", "Administrativo", "Tutor"];
 
+import { useSearchParams } from "next/navigation";
+
 export default function InscricaoInstitucional() {
+  const searchParams = useSearchParams();
+  const initialRole = searchParams.get("role") || "";
+
+  // Normaliza o papel recebido via query string para corresponder à lista de cargos (ex: "professor" → "Professor")
+  const formattedRole = initialRole
+    ? initialRole.charAt(0).toUpperCase() + initialRole.slice(1).toLowerCase()
+    : "";
+  const defaultRole = cargos.includes(formattedRole) ? formattedRole : "";
+
   const [name, setName] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState(defaultRole);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -144,12 +155,17 @@ export default function InscricaoInstitucional() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Cabeçalho */}
+        {/* Cabeçalho com logo e toggle de tema */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-secondary p-2 rounded-lg">
-                <Image alt="logo" src={logo} width={30} height={30} />
+                <Image
+                  alt="Logo da instituição"
+                  src={logo}
+                  width={30}
+                  height={30}
+                />
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                 Inscrição Institucional
@@ -168,7 +184,7 @@ export default function InscricaoInstitucional() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Formulário */}
+          {/* Formulário de inscrição */}
           <Card className="border">
             <CardHeader className="space-y-1">
               <CardTitle className="text-xl flex items-center gap-2">
@@ -182,7 +198,6 @@ export default function InscricaoInstitucional() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Upload de Foto */}
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2">
                     <Camera className="w-4 h-4 text-primary" />
@@ -202,7 +217,6 @@ export default function InscricaoInstitucional() {
 
                 <Separator />
 
-                {/* Nome */}
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome Completo</Label>
                   <Input
@@ -215,7 +229,6 @@ export default function InscricaoInstitucional() {
                   />
                 </div>
 
-                {/* Cargo */}
                 <div className="space-y-2">
                   <Label htmlFor="role">Cargo</Label>
                   <Select value={selectedRole} onValueChange={setSelectedRole}>
@@ -232,7 +245,6 @@ export default function InscricaoInstitucional() {
                   </Select>
                 </div>
 
-                {/* Botão de Envio */}
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -255,7 +267,7 @@ export default function InscricaoInstitucional() {
             </CardContent>
           </Card>
 
-          {/* Preview do Crachá */}
+          {/* Pré-visualização do crachá e dicas */}
           <div className="space-y-6">
             <Card className="border h-full">
               <CardHeader className="space-y-1">
@@ -279,7 +291,6 @@ export default function InscricaoInstitucional() {
 
                 <Separator />
 
-                {/* Dicas */}
                 <Alert className="bg-primary/5 border-primary/20">
                   <CheckCircle className="h-4 w-4 text-primary" />
                   <AlertTitle className="text-primary">
@@ -309,7 +320,6 @@ export default function InscricaoInstitucional() {
           </div>
         </div>
 
-        {/* Rodapé */}
         <Footer />
       </div>
     </div>
