@@ -36,11 +36,10 @@ import {
 
 const cargos = ["Preceptor", "Professor", "Administrativo", "Tutor"];
 
-import { useSearchParams } from "next/navigation";
+
 
 export default function InscricaoInstitucional() {
-  const searchParams = useSearchParams();
-  const initialRole = searchParams.get("role") || "";
+  const initialRole = "Professor";
 
   // Normaliza o papel recebido via query string para corresponder à lista de cargos (ex: "professor" → "Professor")
   const formattedRole = initialRole
