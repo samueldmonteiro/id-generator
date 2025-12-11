@@ -50,7 +50,7 @@ export const LoginForm = () => {
   const [state, action] = useActionState(login, undefined);
 
   if (state?.success) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   return (

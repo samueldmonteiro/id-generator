@@ -3,7 +3,6 @@ import { UserRepository } from "../repositories/user-repository";
 import { LoginDTO } from "../schemas/login-schema";
 import { UserSafe } from "../types/user-type";
 
-
 export class AuthService {
 
   constructor(

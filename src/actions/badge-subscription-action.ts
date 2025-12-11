@@ -25,20 +25,11 @@ export const traineeSubscription = async (formData: FormData): Promise<TraineeSu
     };
   }
 
-  try {
-    const result = await badgeSubscriptionServiceFactory().traineeSubscription(parsed.data);
-    return {
-      success: true,
-      errorForm: 'teste erro imagem'
-    }
-  } catch (error: any) {
-    console.log("ERRO", error.message)
+  const result = await badgeSubscriptionServiceFactory().traineeSubscription(parsed.data);
 
-    return {
-      success: false,
-      errorForm: error.message
-    }
+  return {
+    success: false,
+    errorForm: result?.reason
   }
-
 
 }
