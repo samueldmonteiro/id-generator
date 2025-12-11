@@ -2,11 +2,12 @@
 
 import * as React from "react"
 import {
-  IconDashboard,
-  IconHelp,
-  IconSettings,
-  IconUsers,
-} from "@tabler/icons-react"
+  LayoutDashboard,
+  HelpCircle,
+  Settings,
+  Users,
+  Link as LinkIcon,
+} from "lucide-react"
 
 import { NavMain } from "@/src/components/nav-main"
 import { NavSecondary } from "@/src/components/nav-secondary"
@@ -28,14 +29,19 @@ import { ModeToggle } from "./toggle-theme"
 const data = {
   navMain: [
     {
+      title: "Inscrições",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
       title: "Criar link de Inscrição",
       url: "/dashboard/links",
-      icon: IconDashboard,
+      icon: LinkIcon,
     },
     {
       title: "Criar Usuários",
       url: "/dashboard/usuarios",
-      icon: IconUsers,
+      icon: Users,
     },
   ],
 
@@ -43,12 +49,12 @@ const data = {
     {
       title: "Configurações",
       url: "/dashboard/perfil",
-      icon: IconSettings,
+      icon: Settings,
     },
     {
       title: "Ajuda",
       url: "/dashboard/ajuda",
-      icon: IconHelp,
+      icon: HelpCircle,
     }
   ],
 }

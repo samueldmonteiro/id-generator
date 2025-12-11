@@ -1,8 +1,6 @@
 "use client"
 
-import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
-
-import { Button } from "@/src/components/ui/button"
+import { type Icon } from "@tabler/icons-react"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -11,6 +9,9 @@ import {
   SidebarMenuItem,
 } from "@/src/components/ui/sidebar"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { cn } from "@/src/lib/utils" // Você precisará da função cn para classes condicionais
+import { type LucideIcon } from "lucide-react"
 
 export function NavMain({
   items,
@@ -18,36 +19,31 @@ export function NavMain({
   items: {
     title: string
     url: string
-    icon?: Icon
+    icon?: LucideIcon
   }[]
 }) {
+  const pathname = usePathname()
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
-          <Link href={'/dashboard'}>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              tooltip="Quick Create"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
-            >
-              <IconCirclePlusFilled />
-              <span>Inscrições</span>
-            </SidebarMenuButton>
-           
-          </SidebarMenuItem>
-          </Link>
-        </SidebarMenu>
-        <SidebarMenu>
           {items.map((item) => (
-            <Link href={item.url}>
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
-                <span>{item.title}</span>
-              </SidebarMenuButton>
+              <Link href={item.url} className="block w-full">
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  isActive={pathname === item.url}
+                  className={cn(
+                    "transition-colors",
+                    pathname === item.url && "bg-accent text-accent-foreground"
+                  )}
+                >
+                  {item.icon && <item.icon className="size-4" />}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
-            </Link>
           ))}
         </SidebarMenu>
       </SidebarGroupContent>

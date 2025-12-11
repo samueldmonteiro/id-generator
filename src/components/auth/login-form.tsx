@@ -16,7 +16,7 @@ import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
-import { Card, CardContent, CardFooter } from "@/src/components/ui/card";
+import { Card, CardContent } from "@/src/components/ui/card";
 
 import { ModeToggle } from "@/src/components/toggle-theme";
 import { redirect } from "next/navigation";
