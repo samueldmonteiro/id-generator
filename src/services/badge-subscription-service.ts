@@ -57,7 +57,6 @@ export class BadgeSubscriptionService {
     return (await this.badgeSubscriptionRepo.prisma()).create({
       data: {
         name: dto.name,
-        courseName: 'teste',
         badgeFile: badgeUrl,
         position: dto.position,
         image: imageUrl,

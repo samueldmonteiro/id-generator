@@ -25,7 +25,7 @@ enum UserRole {
 model BadgeSubscription {
   id         Int                       @id @default(autoincrement())
   name       String                    @db.VarChar(100)
-  courseName String                    @db.VarChar(100)
+  courseName String?                    @db.VarChar(100)
   position   BadgeSubscriptionPosition @default(ESTAGIARIO)
   image      String                    @db.VarChar(200)
   badgeFile  String                    @db.VarChar(200)
