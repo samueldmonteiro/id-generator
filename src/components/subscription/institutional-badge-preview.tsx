@@ -19,7 +19,7 @@ export function InstitutionalBadgePreview({
 }: InstitutionalBadgePreviewProps) {
   const [imageError, setImageError] = useState(false);
 
-  const isProfessor = role === "Professor";
+  const isProfessor = role === "PROFESSOR" || role === "PROFESSORA";
 
   // Template 1: Professor
   if (isProfessor) {

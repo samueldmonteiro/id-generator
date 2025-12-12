@@ -1,4 +1,4 @@
-export function BadgeFrontHTML({
+export function TraineeBadgeFrontHTML({
   name,
   course,
   imageBase64,

@@ -31,7 +31,7 @@ import Footer from "@/src/components/footer";
 import { Alert as AlertCustom } from "@/src/components/custom/alert";
 import { institutionalSubscription, InstitutionalSubscriptionResponse } from "@/src/actions/badge-subscription-action";
 
-const cargos = ["ESTAGIARIO", "ADMINISTRATIVO", "PRECEPTOR", "TUTOR", "PROFESSOR", "PROFESSORA"];
+const cargos = ["ADMINISTRATIVO", "PRECEPTOR", "TUTOR", "PROFESSOR", "PROFESSORA"];
 
 export default function InscricaoInstitucional() {
   const initialRole = "PROFESSOR";

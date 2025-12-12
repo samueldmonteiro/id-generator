@@ -2,12 +2,13 @@ import sharp from "sharp";
 import { BadgeSubscriptionRepository } from "../repositories/badge-subscription-repository";
 import { TraineeSubscriptionDTO } from "../schemas/badge-subscriptions/trainee-subscription-schema";
 import { BadgeSubscription } from "../generated/prisma/client";
-import { BadgeFrontHTML } from "@/src/components/subscription/templates/trainee/front";
+import { TraineeBadgeFrontHTML } from "@/src/components/subscription/templates/trainee/front";
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import fs from "fs/promises";
 import { put } from "@vercel/blob";
 import { InstitutionalSubscriptionDTO } from "../schemas/badge-subscriptions/institutional-subscription-schema";
+import { InstitutionalBadgeHTML } from "../components/subscription/templates/institutional/front";
 
 interface FaceValidationResult {
   ok: boolean;
@@ -50,13 +51,16 @@ export class BadgeSubscriptionService {
     const result = await this.validateImage(dto.image);
     if (!result.ok) throw new Error(result.reason);
 
+    const pdfBuffer = await this.generateInstitutionalBadgePDF(dto);
+    const { badgeUrl, imageUrl } = await this.saveSubscriptionFiles({ image: dto.image, badge: pdfBuffer });
+
     return (await this.badgeSubscriptionRepo.prisma()).create({
       data: {
         name: dto.name,
         courseName: 'teste',
-        badgeFile: 'teste',
+        badgeFile: badgeUrl,
         position: dto.position,
-        image: 'teste',
+        image: imageUrl,
       }
     });
   }
@@ -88,9 +92,7 @@ export class BadgeSubscriptionService {
     }
   }
 
-  async generateInstitutionalBadgePDF(dto: InstitutionalSubscriptionDTO){
-
-  }
+ 
 
   async generateTraineeBadgePDF(dto: TraineeSubscriptionDTO) {
     const { name, course, image } = dto;
@@ -101,7 +103,7 @@ export class BadgeSubscriptionService {
     const logoRaw = await fs.readFile("src/assets/anhanguera.png");
     const logoBase64 = `data:image/png;base64,${logoRaw.toString("base64")}`;
 
-    const html = BadgeFrontHTML({
+    const html = TraineeBadgeFrontHTML({
       name,
       course,
       imageBase64: userBase64,
@@ -129,9 +131,47 @@ export class BadgeSubscriptionService {
   }
 
 
-  // ---------------------------------------------
-  // 1) Validação principal
-  // ---------------------------------------------
+  async generateInstitutionalBadgePDF(dto: InstitutionalSubscriptionDTO) {
+    const { name, position, image } = dto;
+
+    const userBuffer = Buffer.from(await image.arrayBuffer());
+    const userBase64 = `data:${image.type};base64,${userBuffer.toString("base64")}`;
+
+    const logoAnhangueraRaw = await fs.readFile("src/assets/anhanguera.png");
+    const logoAnhangueraBase64 = `data:image/png;base64,${logoAnhangueraRaw.toString("base64")}`;
+
+    const logoPitagorasRaw = await fs.readFile("src/assets/pitagoras.png");
+    const logoPitagorasBase64 = `data:image/png;base64,${logoPitagorasRaw.toString("base64")}`;
+
+    const html = InstitutionalBadgeHTML({
+      name,
+      position,
+      imageBase64: userBase64,
+      logoAnhangueraBase64,
+      logoPitagorasBase64
+    });
+
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const pdfBuffer = await page.pdf({
+      width: "360px",
+      height: "500px",
+      printBackground: true,
+    });
+
+    await browser.close();
+
+    return Buffer.from(pdfBuffer);
+  }
+
+  
   public async validateImage(file: File): Promise<FaceValidationResult> {
     try {
       // Formato válido
@@ -256,3 +296,4 @@ export class BadgeSubscriptionService {
     };
   }
 }
+//299
