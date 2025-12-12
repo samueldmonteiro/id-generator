@@ -2,8 +2,13 @@ import { z } from "zod";
 
 export const institutionalSubscriptionSchema = z.object({
   name: z.string().max(100),
-  role: z.enum(["Preceptor", "Professor", "Administrativo", "Tutor"], {
-    message: "Selecione um cargo válido." 
+  position: z.enum(["ESTAGIARIO",
+    "ADMINISTRATIVO",
+    "PRECEPTOR",
+    "TUTOR",
+    "PROFESSOR",
+    "PROFESSORA"], {
+    message: "Selecione um cargo válido."
   }),
   image: z.instanceof(File)
     .refine((file) => file.size > 0, "A imagem é obrigatória.")

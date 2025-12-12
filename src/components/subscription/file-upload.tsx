@@ -65,7 +65,7 @@ export function FileUpload({ onFileSelect, previewUrl, onRemove, className = '' 
             }
           `}
         >
-          <input {...getInputProps()} name="image"/>
+          <input {...getInputProps()} name="image" required/>
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
               <Upload className="w-6 h-6 text-primary" />
@@ -73,7 +73,7 @@ export function FileUpload({ onFileSelect, previewUrl, onRemove, className = '' 
             <div className="space-y-1">
              
               <p className="text-sm text-muted-foreground">
-                Formato 4x4 • PNG, JPG, WEBP (max. 5MB)
+                PNG, JPG, WEBP (max. 5MB)
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-2">

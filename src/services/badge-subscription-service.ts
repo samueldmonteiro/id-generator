@@ -1,5 +1,13 @@
 import sharp from "sharp";
 import { BadgeSubscriptionRepository } from "../repositories/badge-subscription-repository";
+import { TraineeSubscriptionDTO } from "../schemas/badge-subscriptions/trainee-subscription-schema";
+import { BadgeSubscription } from "../generated/prisma/client";
+import { BadgeFrontHTML } from "@/src/components/subscription/templates/trainee/front";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
+import fs from "fs/promises";
+import { put } from "@vercel/blob";
+import { InstitutionalSubscriptionDTO } from "../schemas/badge-subscriptions/institutional-subscription-schema";
 
 interface FaceValidationResult {
   ok: boolean;
@@ -16,21 +24,110 @@ interface FaceValidationResult {
 }
 
 export class BadgeSubscriptionService {
-  constructor(private repo: BadgeSubscriptionRepository) {}
+  constructor(private badgeSubscriptionRepo: BadgeSubscriptionRepository) { }
 
-  public async traineeSubscription(dto: {
-    name: string;
-    course: string;
-    image: File;
-  }) {
+  public async traineeSubscription(dto: TraineeSubscriptionDTO): Promise<BadgeSubscription> {
+
     const result = await this.validateImage(dto.image);
+    if (!result.ok) throw new Error(result.reason);
 
-    if (!result.ok) return result;
+    const pdfBuffer = await this.generateTraineeBadgePDF(dto);
+    const { badgeUrl, imageUrl } = await this.saveSubscriptionFiles({ image: dto.image, badge: pdfBuffer });
 
-    // await this.repo.create(...)
-
-    return { ok: true, faceData: result.faceData };
+    return (await this.badgeSubscriptionRepo.prisma()).create({
+      data: {
+        name: dto.name,
+        courseName: dto.course,
+        badgeFile: badgeUrl,
+        position: "ESTAGIARIO",
+        image: imageUrl,
+      }
+    });
   }
+
+  public async institutionalSubscription(dto: InstitutionalSubscriptionDTO): Promise<BadgeSubscription> {
+
+    const result = await this.validateImage(dto.image);
+    if (!result.ok) throw new Error(result.reason);
+
+    return (await this.badgeSubscriptionRepo.prisma()).create({
+      data: {
+        name: dto.name,
+        courseName: 'teste',
+        badgeFile: 'teste',
+        position: dto.position,
+        image: 'teste',
+      }
+    });
+  }
+
+  private async saveSubscriptionFiles(files: { image: File, badge: Buffer }) {
+
+    const imageBuffer = Buffer.from(await files.image.arrayBuffer());
+    const imageUpload = await put(
+      `subscriber-images/${Date.now()}-${files.image.name}`,
+      imageBuffer,
+      {
+        access: "public",
+        contentType: files.image.type
+      }
+    );
+
+    const pdfUpload = await put(
+      `subscription-pdfs/${Date.now()}.pdf`,
+      files.badge,
+      {
+        access: "public",
+        contentType: "application/pdf"
+      }
+    );
+
+    return {
+      badgeUrl: pdfUpload.url,
+      imageUrl: imageUpload.url
+    }
+  }
+
+  async generateInstitutionalBadgePDF(dto: InstitutionalSubscriptionDTO){
+
+  }
+
+  async generateTraineeBadgePDF(dto: TraineeSubscriptionDTO) {
+    const { name, course, image } = dto;
+
+    const userBuffer = Buffer.from(await image.arrayBuffer());
+    const userBase64 = `data:${image.type};base64,${userBuffer.toString("base64")}`;
+
+    const logoRaw = await fs.readFile("src/assets/anhanguera.png");
+    const logoBase64 = `data:image/png;base64,${logoRaw.toString("base64")}`;
+
+    const html = BadgeFrontHTML({
+      name,
+      course,
+      imageBase64: userBase64,
+      logoBase64,
+    });
+
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const pdfBuffer = await page.pdf({
+      width: "360px",
+      height: "450px",
+      printBackground: true,
+    });
+
+    await browser.close();
+
+    return Buffer.from(pdfBuffer);
+  }
+
 
   // ---------------------------------------------
   // 1) Validação principal

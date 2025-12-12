@@ -29,26 +29,20 @@ import logo from "@/src/assets/logo.png";
 import Image from "next/image";
 import Footer from "@/src/components/footer";
 import { Alert as AlertCustom } from "@/src/components/custom/alert";
-import {
-  institutionalSubscription,
-  InstitutionalSubscriptionResponse,
-} from "@/src/actions/institutional-subscription-action";
+import { institutionalSubscription, InstitutionalSubscriptionResponse } from "@/src/actions/badge-subscription-action";
 
-const cargos = ["Preceptor", "Professor", "Administrativo", "Tutor"];
-
-
+const cargos = ["ESTAGIARIO", "ADMINISTRATIVO", "PRECEPTOR", "TUTOR", "PROFESSOR", "PROFESSORA"];
 
 export default function InscricaoInstitucional() {
-  const initialRole = "Professor";
+  const initialRole = "PROFESSOR";
 
-  // Normaliza o papel recebido via query string para corresponder à lista de cargos (ex: "professor" → "Professor")
   const formattedRole = initialRole
     ? initialRole.charAt(0).toUpperCase() + initialRole.slice(1).toLowerCase()
     : "";
   const defaultRole = cargos.includes(formattedRole) ? formattedRole : "";
 
   const [name, setName] = useState("");
-  const [selectedRole, setSelectedRole] = useState(defaultRole);
+  const [selectedPosition, setSelectedPosition] = useState(defaultRole);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,7 +67,7 @@ export default function InscricaoInstitucional() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !selectedRole || !photoFile) {
+    if (!name || !selectedPosition || !photoFile) {
       toast.error("Por favor, preencha todos os campos e selecione uma foto.");
       return;
     }
@@ -83,32 +77,22 @@ export default function InscricaoInstitucional() {
 
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("role", selectedRole);
+    formData.append("position", selectedPosition);
     formData.append("image", photoFile);
 
-    try {
-      const resultAction = await institutionalSubscription(formData);
-      setResult(resultAction);
+    const resultAction = await institutionalSubscription(formData);
+    setResult(resultAction);
+    console.log("RESULT", resultAction)
 
-      if (resultAction.success) {
-        toast.success(
-          "Inscrição enviada com sucesso! Seu cadastro foi realizado."
-        );
-        setIsSubmitted(true);
-      } else {
-        toast.error("Erro ao enviar inscrição. Verifique os dados.");
-      }
-    } catch (error) {
-      toast.error("Ocorreu um erro inesperado.");
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
+    if (resultAction.success) {
+      setIsSubmitted(true);
     }
+    setIsSubmitting(false);
   };
 
   const handleReset = () => {
     setName("");
-    setSelectedRole("");
+    setSelectedPosition("");
     handleRemovePhoto();
     setIsSubmitted(false);
     setResult(null);
@@ -142,7 +126,7 @@ export default function InscricaoInstitucional() {
               </Alert>
 
               <Button onClick={handleReset} className="w-full" size="lg">
-                Nova Inscrição
+                Voltar ao formulário
               </Button>
             </div>
           </CardContent>
@@ -173,11 +157,11 @@ export default function InscricaoInstitucional() {
             <ModeToggle />
           </div>
 
-          {result?.errorForm && (
+          {!result?.success && result?.message && (
             <AlertCustom
               variant="error"
-              title={result?.errorForm}
-              description="Houve um erro no processamento."
+              title={result?.message}
+              description="Ops! Houve um erro no processamento."
             />
           )}
         </div>
@@ -229,8 +213,8 @@ export default function InscricaoInstitucional() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="role">Cargo</Label>
-                  <Select value={selectedRole} onValueChange={setSelectedRole}>
+                  <Label htmlFor="position">Cargo</Label>
+                  <Select value={selectedPosition} onValueChange={setSelectedPosition}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione seu cargo" />
                     </SelectTrigger>
@@ -283,7 +267,7 @@ export default function InscricaoInstitucional() {
                 <div className="flex justify-center">
                   <InstitutionalBadgePreview
                     name={name}
-                    role={selectedRole}
+                    role={selectedPosition}
                     photoUrl={photoUrl}
                   />
                 </div>

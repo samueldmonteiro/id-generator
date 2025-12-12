@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback, useActionState } from 'react';
-import { Camera, BookOpen, CheckCircle, Mail, Sparkles } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Camera, BookOpen, CheckCircle, Sparkles } from 'lucide-react';
 import { BadgePreview } from '@/src/components/subscription/badge-preview';
 import { FileUpload } from '@/src/components/subscription/file-upload';
 import { ModeToggle } from '@/src/components/toggle-theme';
@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src
 import { Alert, AlertDescription, AlertTitle } from '@/src/components/ui/alert';
 import { Separator } from '@/src/components/ui/separator';
 import { Label } from '@/src/components/ui/label';
-import { toast } from 'sonner';
 import logo from "@/src/assets/logo.png";
 import Image from 'next/image';
 import Footer from '@/src/components/footer';
@@ -56,31 +55,27 @@ export default function InscricaoEstagiario() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name || !selectedCourse || !photoFile) {
-      toast.error('Por favor, preencha todos os campos e selecione uma foto.');
-      return;
-    }
-
     setIsSubmitting(true);
     setIsSubmitted(false);
 
-    toast.success('Inscrição enviada com sucesso! Seu cadastro para o crachá de estagiário foi realizado.');
+    if (!photoFile) {
+      console.error('Por favor, preencha todos os campos e selecione uma foto.');
+      return;
+    }
 
-    // Aqui você implementaria o envio real para a API
     const formData = new FormData();
     formData.append('name', name);
     formData.append('course', selectedCourse);
     formData.append('image', photoFile);
 
-    const result2 = await traineeSubscription(formData);
-    setResult(result2);
-    console.log(result2);
+    const response = await traineeSubscription(formData);
+    setResult(response);
+    console.log(response);
 
-    console.log('Dados enviados:', { name, course: selectedCourse, photoFile });
-
+    if (response.success) {
+      setIsSubmitted(true);
+    }
     setIsSubmitting(false);
-
   };
 
   const handleReset = () => {
@@ -122,7 +117,7 @@ export default function InscricaoEstagiario() {
                 className="w-full"
                 size="lg"
               >
-                Nova Inscrição
+                Voltar ao formulário
               </Button>
             </div>
           </CardContent>
@@ -148,8 +143,8 @@ export default function InscricaoEstagiario() {
             <ModeToggle />
           </div>
 
-          {result?.errorForm &&
-            <AlertCustom variant='error' title={result?.errorForm} description='Sua imagem não possui a qualidade correta' />
+          {!result?.success && result?.message &&
+            <AlertCustom variant='error' title={result?.message} description='Envie uma imagem no padrão correto!' />
           }
 
         </div>
@@ -284,7 +279,6 @@ export default function InscricaoEstagiario() {
                       {[
                         'Use fundo claro e uniforme',
                         'Olhe diretamente para a câmera',
-                        'Use iluminação natural',
                         'Evite acessórios que cubram o rosto'
                       ].map((tip, index) => (
                         <li key={index} className="flex items-start gap-2 text-sm">
