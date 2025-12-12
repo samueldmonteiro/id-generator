@@ -1,32 +1,57 @@
 import 'dotenv/config';
-import prisma from '@/src/lib/prisma';
-import * as bcrypt from 'bcryptjs';
+import prisma from "../src/lib/prisma";
+import { BadgeSubscriptionPosition } from "../src/generated/prisma/enums";
+
+
 
 async function main() {
+  console.log("Seeding database...");
 
-  const hashedPassword = await bcrypt.hash('123456', 12);
-
-  const user1 = await prisma.user.upsert({
-    where: { email: 'user@example.com' },
-    update: {},
-    create: {
-      email: 'user@example.com',
-      password: hashedPassword,
-      name: 'John Doe',
-      role: 'USER',
+  const subscriptions = [
+    {
+      name: "Ana Silva",
+      courseName: "Engenharia de Software",
+      position: "ESTAGIARIO" as BadgeSubscriptionPosition,
+      image: "https://github.com/shadcn.png",
+      badgeFile: "https://example.com/badge1.pdf",
     },
-  });
-
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@example.com' },
-    update: {},
-    create: {
-      email: 'admin@example.com',
-      password: hashedPassword,
-      name: 'Admin User',
-      role: 'ADMIN',
+    {
+      name: "Carlos Souza",
+      courseName: null,
+      position: "PROFESSOR" as BadgeSubscriptionPosition,
+      image: "", // Fallback test
+      badgeFile: "https://example.com/badge2.pdf",
     },
-  });
+    {
+      name: "Mariana Oliveira",
+      courseName: null,
+      position: "ADMINISTRATIVO" as BadgeSubscriptionPosition,
+      image: "https://github.com/shadcn.png",
+      badgeFile: "https://example.com/badge3.pdf",
+    },
+    {
+      name: "Pedro Santos",
+      courseName: "Medicina",
+      position: "ESTAGIARIO" as BadgeSubscriptionPosition,
+      image: "",
+      badgeFile: "https://example.com/badge4.pdf",
+    },
+    {
+      name: "Fernanda Costa",
+      courseName: null,
+      position: "TUTOR" as BadgeSubscriptionPosition,
+      image: "https://github.com/shadcn.png",
+      badgeFile: "https://example.com/badge5.pdf",
+    },
+  ];
+
+  for (const sub of subscriptions) {
+    await prisma.badgeSubscription.create({
+      data: sub,
+    });
+  }
+
+  console.log("Seeding finished.");
 }
 
 main()
